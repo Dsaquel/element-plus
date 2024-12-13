@@ -19,6 +19,7 @@ import '@element-plus/theme-chalk/src/message.scss'
   const app = createApp(App)
   console.info("hello")
   console.info("hello2")
+  console.info("hello3")
 
   app.mount('#play')
 })()
