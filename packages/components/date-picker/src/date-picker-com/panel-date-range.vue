@@ -6,6 +6,7 @@
       {
         'has-sidebar': $slots.sidebar || hasShortcuts,
         'has-time': showTime,
+        'single-panel': singlePanel,
       },
     ]"
   >
@@ -104,7 +105,13 @@
             </span>
           </span>
         </div>
-        <div :class="[ppNs.e('content'), drpNs.e('content')]" class="is-left">
+        <div
+          :class="[
+            ppNs.e('content'),
+            drpNs.e('content'),
+            { 'is-left': !singlePanel },
+          ]"
+        >
           <div :class="drpNs.e('header')">
             <button
               type="button"
@@ -129,10 +136,13 @@
               </slot>
             </button>
             <button
-              v-if="unlinkPanels"
+              v-if="unlinkPanels || singlePanel"
               type="button"
-              :disabled="!enableYearArrow"
-              :class="[ppNs.e('icon-btn'), { 'is-disabled': !enableYearArrow }]"
+              :disabled="!enableYearArrow && !singlePanel"
+              :class="[
+                ppNs.e('icon-btn'),
+                { 'is-disabled': !enableYearArrow && !singlePanel },
+              ]"
               :aria-label="t(`el.datepicker.nextYear`)"
               class="d-arrow-right"
               @click="leftNextYear"
@@ -142,12 +152,12 @@
               </slot>
             </button>
             <button
-              v-if="unlinkPanels"
+              v-if="unlinkPanels || singlePanel"
               type="button"
-              :disabled="!enableMonthArrow"
+              :disabled="!enableMonthArrow && !singlePanel"
               :class="[
                 ppNs.e('icon-btn'),
-                { 'is-disabled': !enableMonthArrow },
+                { 'is-disabled': !enableMonthArrow && !singlePanel },
               ]"
               :aria-label="t(`el.datepicker.nextMonth`)"
               class="arrow-right"
@@ -172,7 +182,11 @@
             @select="onSelect"
           />
         </div>
-        <div :class="[ppNs.e('content'), drpNs.e('content')]" class="is-right">
+        <div
+          v-if="!singlePanel"
+          :class="[ppNs.e('content'), drpNs.e('content')]"
+          class="is-right"
+        >
           <div :class="drpNs.e('header')">
             <button
               v-if="unlinkPanels"
