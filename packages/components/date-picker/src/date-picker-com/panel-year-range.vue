@@ -4,7 +4,7 @@
       ppNs.b(),
       drpNs.b(),
       {
-        'has-sidebar': Boolean(useSlots().sidebar) || hasShortcuts,
+        'has-sidebar': Boolean($slots.sidebar) || hasShortcuts,
         'single-panel': singlePanel,
       },
     ]"
@@ -100,7 +100,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, inject, ref, toRef, useSlots, watch } from 'vue'
+import { computed, inject, ref, toRef, watch } from 'vue'
 import dayjs from 'dayjs'
 import { isArray } from '@element-plus/utils'
 import { DArrowLeft, DArrowRight } from '@element-plus/icons-vue'
