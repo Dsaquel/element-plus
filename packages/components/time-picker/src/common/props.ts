@@ -255,7 +255,7 @@ export interface PickerOptions {
   handleFocusPicker?: () => void
 }
 
-export const timePickerRngeTriggerProps = buildProps({
+export const timePickerRangeTriggerProps = buildProps({
   id: {
     type: definePropType<string[]>(Array),
   },
@@ -268,3 +268,8 @@ export const timePickerRngeTriggerProps = buildProps({
   startPlaceholder: String,
   endPlaceholder: String,
 } as const)
+
+/**
+ * @deprecated Use `timePickerRangeTriggerProps` instead. This will be removed in future versions.
+ */
+export const timePickerRngeTriggerProps = timePickerRangeTriggerProps
