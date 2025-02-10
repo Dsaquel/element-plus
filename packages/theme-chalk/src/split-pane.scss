@@ -1,0 +1,17 @@
+@use 'mixins/mixins' as *;
+@use 'common/var' as *;
+
+@include b(split-pane) {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: getCssVar('text-color', 'regular');
+  line-height: 20px;
+  list-style: none;
+  align-items: stretch;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
