@@ -20,3 +20,9 @@ cypress/screenshots/*
 cypress/videos/*
 tmp
 docs/.vitepress/cache
+*/__tests__/*
+docs/*
+ssr-testing/*
+internal/*
+.git/*
+

@@ -13,4 +13,8 @@
   list-style: none;
   align-items: stretch;
   box-sizing: border-box;
+
+  &.is-vertical {
+    flex-direction: column;
+  }
 }
