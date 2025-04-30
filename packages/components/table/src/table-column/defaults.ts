@@ -19,7 +19,7 @@ type ValueOf<T> = T[keyof T]
 
 interface TableColumnCtx<T> {
   id: string
-  realWidth: number
+  realWidth: number | null
   type: string
   label: string
   className: string

@@ -256,7 +256,7 @@ export function parseMinWidth(minWidth: number | string): number | string {
   return minWidth
 }
 
-export function parseHeight(height: number | string) {
+export function parseHeight(height: number | string | null) {
   if (isNumber(height)) {
     return height
   }
@@ -290,7 +290,7 @@ export function toggleRowStatus<T>(
   row: T,
   newVal?: boolean,
   tableTreeProps?: TreeProps,
-  selectable?: (row: T, index?: number) => boolean,
+  selectable?: ((row: T, index?: number) => boolean) | null,
   rowIndex?: number
 ): boolean {
   let _rowIndex = rowIndex ?? 0

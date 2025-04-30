@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getCurrentInstance, nextTick, unref } from 'vue'
 import { isNull } from 'lodash-unified'
 import { useNamespace } from '@element-plus/hooks'

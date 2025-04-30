@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { computed, getCurrentInstance, ref, toRefs, unref, watch } from 'vue'
 import { hasOwn, isArray, isString } from '@element-plus/utils'
 import {
@@ -32,8 +31,8 @@ const sortData = (data, states) => {
   )
 }
 
-const doFlattenColumns = (columns) => {
-  const result = []
+const doFlattenColumns = <T>(columns: TableColumnCtx<T>[]) => {
+  const result: TableColumnCtx<T>[] = []
   columns.forEach((column) => {
     if (column.children && column.children.length > 0) {
       // eslint-disable-next-line prefer-spread
@@ -48,7 +47,7 @@ const doFlattenColumns = (columns) => {
 function useWatcher<T>() {
   const instance = getCurrentInstance() as Table<T>
   const { size: tableSize } = toRefs(instance.proxy?.$props as any)
-  const rowKey: Ref<string> = ref(null)
+  const rowKey: Ref<string | null> = ref(null)
   const data: Ref<T[]> = ref([])
   const _data: Ref<T[]> = ref([])
   const isComplex = ref(false)
@@ -68,7 +67,8 @@ function useWatcher<T>() {
   const selection: Ref<T[]> = ref([])
   const reserveSelection = ref(false)
   const selectOnIndeterminate = ref(false)
-  const selectable: Ref<(row: T, index: number) => boolean> = ref(null)
+  const selectable: Ref<((row: T, index?: number) => boolean) | null> =
+    ref(null)
   const filters: Ref<StoreFilter> = ref({})
   const filteredData = ref(null)
   const sortingColumn = ref(null)
@@ -119,12 +119,12 @@ function useWatcher<T>() {
         column.type !== 'selection' && [true, 'left'].includes(column.fixed)
     )
 
-    let selectColFixLeft
+    let selectColFixLeft = false
     if (_columns.value?.[0]?.type === 'selection') {
       const selectColumn = _columns.value[0]
       selectColFixLeft =
         [true, 'left'].includes(selectColumn.fixed) ||
-        (fixedColumns.value.length && selectColumn.fixed !== 'right')
+        !!(fixedColumns.value.length && selectColumn.fixed !== 'right')
       if (selectColFixLeft) {
         fixedColumns.value.unshift(selectColumn)
       }
@@ -139,8 +139,7 @@ function useWatcher<T>() {
         (selectColFixLeft ? column.type !== 'selection' : true) && !column.fixed
     )
 
-    originColumns.value = []
-      .concat(fixedColumns.value)
+    originColumns.value = Array.from(fixedColumns.value)
       .concat(notFixedColumns)
       .concat(rightFixedColumns.value)
     const leafColumns = doFlattenColumns(notFixedColumns)
@@ -151,8 +150,7 @@ function useWatcher<T>() {
     fixedLeafColumnsLength.value = fixedLeafColumns.length
     rightFixedLeafColumnsLength.value = rightFixedLeafColumns.length
 
-    columns.value = []
-      .concat(fixedLeafColumns)
+    columns.value = Array.from(fixedLeafColumns)
       .concat(leafColumns)
       .concat(rightFixedLeafColumns)
     isComplex.value =
@@ -173,7 +171,7 @@ function useWatcher<T>() {
 
   // 选择
   const isSelected = (row: DefaultRow) => {
-    if (selectedMap.value) {
+    if (selectedMap.value && rowKey.value) {
       return !!selectedMap.value[getRowIdentity(row, rowKey.value)]
     } else {
       return selection.value.includes(row)
@@ -288,9 +286,11 @@ function useWatcher<T>() {
   }
 
   const updateSelectionByRowKey = () => {
+    const key = rowKey.value
+    if (!key) return
     data.value.forEach((row) => {
-      const rowId = getRowIdentity(row, rowKey.value)
-      const rowInfo = selectedMap.value![rowId]
+      const rowId = getRowIdentity(row, key)
+      const rowInfo = selectedMap.value?.[rowId]
       if (rowInfo) {
         selection.value[rowInfo.index] = row
       }
