@@ -17,7 +17,14 @@ import type { TableColumnCtx } from '../table-column/defaults'
 import type { DefaultRow, Table, TableRefs } from '../table/defaults'
 import type { StoreFilter } from '.'
 
-const sortData = (data, states) => {
+const sortData = <T>(
+  data: T[],
+  states: {
+    sortingColumn: TableColumnCtx<T>
+    sortProp: string | null
+    sortOrder: string | null
+  }
+) => {
   const sortingColumn = states.sortingColumn
   if (!sortingColumn || isString(sortingColumn.sortable)) {
     return data
@@ -67,14 +74,13 @@ function useWatcher<T>() {
   const selection: Ref<T[]> = ref([])
   const reserveSelection = ref(false)
   const selectOnIndeterminate = ref(false)
-  const selectable: Ref<((row: T, index?: number) => boolean) | null> =
-    ref(null)
+  const selectable: Ref<((row: T, index: number) => boolean) | null> = ref(null)
   const filters: Ref<StoreFilter> = ref({})
-  const filteredData = ref(null)
-  const sortingColumn = ref(null)
-  const sortProp = ref(null)
-  const sortOrder = ref(null)
-  const hoverRow = ref(null)
+  const filteredData: Ref<T[] | null> = ref(null)
+  const sortingColumn: Ref<TableColumnCtx<T> | null> = ref(null)
+  const sortProp: Ref<string | null> = ref(null)
+  const sortOrder: Ref<string | number | null> = ref(null)
+  const hoverRow: Ref<T | null> = ref(null)
 
   const selectedMap = computed(() => {
     return rowKey.value ? getKeysMap(selection.value, rowKey.value) : undefined
@@ -340,10 +346,10 @@ function useWatcher<T>() {
     if (!instance || !instance.store) return 0
     const { treeData } = instance.store.states
     let count = 0
-    const children = treeData.value[rowKey]?.children
+    const children = (treeData.value as any)[rowKey]?.children
     if (children) {
       count += children.length
-      children.forEach((childKey) => {
+      children.forEach((childKey: string) => {
         count += getChildrenCount(childKey)
       })
     }
@@ -351,19 +357,19 @@ function useWatcher<T>() {
   }
 
   // 过滤与排序
-  const updateFilters = (columns, values) => {
+  const updateFilters = (columns: any, values: any) => {
     if (!isArray(columns)) {
       columns = [columns]
     }
-    const filters_ = {}
-    columns.forEach((col) => {
+    const filters_ = {} as any
+    columns.forEach((col: any) => {
       filters.value[col.id] = values
       filters_[col.columnKey || col.id] = values
     })
     return filters_
   }
 
-  const updateSort = (column, prop, order) => {
+  const updateSort = (column: any, prop: any, order: any) => {
     if (sortingColumn.value && sortingColumn.value !== column) {
       sortingColumn.value.order = null
     }
@@ -390,13 +396,12 @@ function useWatcher<T>() {
           )
         })
       }
-    })
-
-    filteredData.value = sourceData
+    }) as any
+    ;(filteredData.value as any) = sourceData
   }
 
   const execSort = () => {
-    data.value = sortData(filteredData.value, {
+    data.value = sortData(filteredData.value ?? [], {
       sortingColumn: sortingColumn.value,
       sortProp: sortProp.value,
       sortOrder: sortOrder.value,
@@ -404,14 +409,14 @@ function useWatcher<T>() {
   }
 
   // 根据 filters 与 sort 去过滤 data
-  const execQuery = (ignore = undefined) => {
-    if (!(ignore && ignore.filter)) {
+  const execQuery = (ignore: { filter: boolean } | undefined = undefined) => {
+    if (!(ignore && (ignore as any).filter)) {
       execFilter()
     }
     execSort()
   }
 
-  const clearFilter = (columnKeys) => {
+  const clearFilter = (columnKeys: any) => {
     const { tableHeaderRef } = instance.refs as TableRefs
     if (!tableHeaderRef) return
     const panels = Object.assign({}, tableHeaderRef.filterPanels)

@@ -31,8 +31,8 @@ class TableLayout<T> {
   gutterWidth: number
   constructor(options: Record<string, any>) {
     this.observers = []
-    this.table = null
-    this.store = null
+    this.table = null as unknown as Table<T>
+    this.store = null as unknown as Store<T>
     this.columns = []
     this.fit = true
     this.showHeader = true
@@ -46,9 +46,9 @@ class TableLayout<T> {
     for (const name in options) {
       if (hasOwn(options, name)) {
         if (isRef(this[name])) {
-          this[name as string].value = options[name]
+          ;(this[name] as Ref<any>).value = options[name] as any
         } else {
-          this[name as string] = options[name]
+          this[name as keyof typeof this] = options[name]
         }
       }
     }

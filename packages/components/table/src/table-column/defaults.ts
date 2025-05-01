@@ -59,10 +59,10 @@ interface TableColumnCtx<T> {
   renderCell: (data: any) => void
   colSpan: number
   rowSpan: number
-  children: TableColumnCtx<T>[]
+  children?: TableColumnCtx<T>[]
   level: number
   filterable: boolean | FilterMethods<T> | Filters
-  order: string
+  order: string | null
   isColumnGroup: boolean
   isSubColumn: boolean
   columns: TableColumnCtx<T>[]
