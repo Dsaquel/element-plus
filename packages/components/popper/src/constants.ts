@@ -11,10 +11,10 @@ export type Measurable = {
  * referenceRef indicates the element that popper content relative with
  */
 export type ElPopperInjectionContext = {
-  triggerRef: Ref<Measurable | undefined>
+  triggerRef: Ref<HTMLElement | undefined>
   contentRef: Ref<HTMLElement | undefined>
   popperInstanceRef: Ref<Instance | undefined>
-  referenceRef: Ref<Measurable | undefined>
+  referenceRef: Ref<HTMLElement | undefined>
   role: ComputedRef<string>
 }
 

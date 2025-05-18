@@ -1,16 +1,23 @@
-import { computed, inject, onMounted, ref, unref, watch } from 'vue'
+import {
+  computed,
+  inject,
+  onMounted,
+  ref,
+  unref,
+  watch,
+  watchEffect,
+} from 'vue'
 import { isUndefined } from 'lodash-unified'
 import { usePopper } from '@element-plus/hooks'
 import { POPPER_INJECTION_KEY } from '../constants'
 import { buildPopperOptions, unwrapMeasurableEl } from '../utils'
 
-import type { Modifier } from '@popperjs/core'
-import type { PartialOptions } from '@element-plus/hooks'
+import type {} from '@floating-ui/dom'
 import type { PopperContentProps } from '../content'
 
 const DEFAULT_ARROW_OFFSET = 0
 
-export const usePopperContent = (props: PopperContentProps) => {
+export const usePopperContent = async (props: PopperContentProps) => {
   const { popperInstanceRef, contentRef, triggerRef, role } = inject(
     POPPER_INJECTION_KEY,
     undefined
@@ -23,7 +30,7 @@ export const usePopperContent = (props: PopperContentProps) => {
     return {
       name: 'eventListeners',
       enabled: !!props.visible,
-    } as Modifier<'eventListeners', any>
+    }
   })
 
   const arrowModifier = computed(() => {
@@ -42,49 +49,49 @@ export const usePopperContent = (props: PopperContentProps) => {
     } as any
   })
 
-  const options = computed<PartialOptions>(() => {
-    return {
-      onFirstUpdate: () => {
-        update()
-      },
-      ...buildPopperOptions(props, [
-        unref(arrowModifier),
-        unref(eventListenerModifier),
-      ]),
-    }
-  })
+  // const options = computed<PartialOptions>(() => {
+  //   return {
+  //     onFirstUpdate: () => {
+  //       update()
+  //     },
+  //     ...buildPopperOptions(props, [
+  //       unref(arrowModifier),
+  //       unref(eventListenerModifier),
+  //     ]),
+  //   }
+  // })
 
   const computedReference = computed(
     () => unwrapMeasurableEl(props.referenceEl) || unref(triggerRef)
   )
 
-  const { attributes, state, styles, update, forceUpdate, instanceRef } =
-    usePopper(computedReference, contentRef, options)
+  const styles = ref<Partial<CSSStyleDeclaration>>({})
 
-  watch(instanceRef, (instance) => (popperInstanceRef.value = instance), {
-    flush: 'sync',
+  watchEffect(async () => {
+    if (!computedReference.value || !contentRef.value)
+      return console.log('here!')
+    styles.value = await usePopper(computedReference, contentRef)
+    console.log(styles.value)
   })
 
-  onMounted(() => {
-    watch(
-      () => unref(computedReference)?.getBoundingClientRect(),
-      () => {
-        update()
-      }
-    )
-  })
+  // watch(instanceRef, (instance) => (popperInstanceRef.value = instance), {
+  //   flush: 'sync',
+  // })
+
+  // onMounted(() => {
+  //   watch(
+  //     () => unref(computedReference)?.getBoundingClientRect(),
+  //     () => {
+  //       update()
+  //     }
+  //   )
+  // })
 
   return {
-    attributes,
     arrowRef,
     contentRef,
-    instanceRef,
-    state,
     styles,
     role,
-
-    forceUpdate,
-    update,
   }
 }
 

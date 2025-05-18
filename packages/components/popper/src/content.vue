@@ -1,24 +1,10 @@
 <template>
-  <div
-    ref="contentRef"
-    v-bind="contentAttrs"
-    :style="contentStyle"
-    :class="contentClass"
-    tabindex="-1"
-    @mouseenter="(e) => $emit('mouseenter', e)"
-    @mouseleave="(e) => $emit('mouseleave', e)"
-  >
-    <el-focus-trap
-      :trapped="trapped"
-      :trap-on-focus-in="true"
-      :focus-trap-el="contentRef"
-      :focus-start-el="focusStartRef"
-      @focus-after-trapped="onFocusAfterTrapped"
-      @focus-after-released="onFocusAfterReleased"
-      @focusin="onFocusInTrap"
-      @focusout-prevented="onFocusoutPrevented"
-      @release-requested="onReleaseRequested"
-    >
+  <div ref="contentRef" :style="contentStyle" :class="contentClass" tabindex="-1"
+    @mouseenter="(e) => $emit('mouseenter', e)" @mouseleave="(e) => $emit('mouseleave', e)">
+    <el-focus-trap :trapped="trapped" :trap-on-focus-in="true" :focus-trap-el="contentRef"
+      :focus-start-el="focusStartRef" @focus-after-trapped="onFocusAfterTrapped"
+      @focus-after-released="onFocusAfterReleased" @focusin="onFocusInTrap" @focusout-prevented="onFocusoutPrevented"
+      @release-requested="onReleaseRequested">
       <slot />
     </el-focus-trap>
   </div>
@@ -59,19 +45,17 @@ const {
   onReleaseRequested,
 } = usePopperContentFocusTrap(props, emit)
 
-const { attributes, arrowRef, contentRef, styles, instanceRef, role, update } =
-  usePopperContent(props)
+const { arrowRef, contentRef, styles, role } =
+  await usePopperContent(props)
 
 const {
   ariaModal,
   arrowStyle,
-  contentAttrs,
   contentClass,
   contentStyle,
   updateZIndex,
 } = usePopperContentDOM(props, {
   styles,
-  attributes,
   role,
 })
 
@@ -94,7 +78,6 @@ if (formItemContext) {
 let triggerTargetAriaStopWatch: WatchStopHandle | undefined = undefined
 
 const updatePopper = (shouldUpdateZIndex = true) => {
-  update()
   shouldUpdateZIndex && updateZIndex()
 }
 
@@ -155,7 +138,7 @@ defineExpose({
   /**
    * @description popperjs instance
    */
-  popperInstanceRef: instanceRef,
+  // popperInstanceRef: instanceRef,
   /**
    * @description method for updating popper
    */

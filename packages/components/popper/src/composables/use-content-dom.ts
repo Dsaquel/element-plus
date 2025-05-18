@@ -9,17 +9,11 @@ import type { PopperContentProps } from '../content'
 
 export const usePopperContentDOM = (
   props: PopperContentProps,
-  {
-    attributes,
-    styles,
-    role,
-  }: Pick<UsePopperReturn, 'attributes' | 'styles'> &
-    Pick<UsePopperContentReturn, 'role'>
+  { styles, role }: any
 ) => {
   const { nextZIndex } = useZIndex()
   const ns = useNamespace('popper')
 
-  const contentAttrs = computed(() => unref(attributes).popper)
   const contentZIndex = ref<number>(
     isNumber(props.zIndex) ? props.zIndex : nextZIndex()
   )
@@ -50,7 +44,6 @@ export const usePopperContentDOM = (
   return {
     ariaModal,
     arrowStyle,
-    contentAttrs,
     contentClass,
     contentStyle,
     contentZIndex,
