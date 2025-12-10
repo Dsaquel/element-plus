@@ -27,5 +27,6 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           pattern: './dist/element-plus/dist/*.{js,mjs,css}'
+          clean-script: "clean"
         env:
           NODE_OPTIONS: --max-old-space-size=4096
